@@ -1,0 +1,386 @@
+﻿<!--<!DOCTYPE html>
+<html>
+<head>
+    <link href="CalculatorCSS.css" rel="stylesheet" />
+</head>
+<body style="background-color:azure">
+
+    <div class="calculator">
+        <div class="calculator__display">0</div>
+        <div class="calculator__result"> … </div>
+    </div>
+
+    <div class="calculator__keys">
+        <button class="key--operator" data-action="add">+</button>
+        <button class="key--operator" data-action="subtract">
+            -
+        </button>
+        <button class="key--operator" data-action="multiply">&times;</button>
+        <button class="key--operator" data-action="divide">
+            ÷
+        </button>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>0</button>
+        <button data-action="decimal">.</button>
+        <button data-action="clear">AC</button>
+        <button class="key--equal" data-action="calculate">=</button>
+    </div>
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script>
+
+    const calculator = document.querySelector('.calculator')
+    const keys = calculator.querySelector('.calculator__result')
+    const display = document.querySelector('.calculator__display')
+
+    const _keys = document.querySelector('.calculator__keys')
+    _keys.addEventListener('click', e => {
+        if (e.target.matches('button')) {
+
+            const key = e.target
+            const action = key.dataset.action
+            const keyContent = key.textContent
+            const displayedNum = display.textContent
+
+            if (!action) {
+                if (displayedNum === '0') {
+                    display.textContent = keyContent
+                } else {
+                    display.textContent = displayedNum + keyContent
+                }
+            }
+
+            if (
+                action === 'add' ||
+                action === 'subtract' ||
+                action === 'multiply' ||
+                action === 'divide'
+            ) {
+                alert('operator key!')
+            }
+            // Do something
+        }
+    })
+
+
+</script>-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="CalculatorCSS.css" rel="stylesheet" />
+</head>
+<body style="background-color:azure">
+
+    <div class="resultview">
+        <div id='result'></div>
+        <div id='totalresult'></div>
+    </div>
+
+    <div class="grid-container">
+
+        <button class="displaynum grid-item" value="1">1</button>
+        <button class="displaynum grid-item" value="2">2</button>
+        <button class="displaynum grid-item" value="3">3</button>
+        <button class="grid-item operator" value="+">+</button>
+        <button class="displaynum grid-item" value="4">4</button>
+        <button class="displaynum grid-item" value="5">5</button>
+        <button class="displaynum grid-item" value="6">6</button>
+        <button class="grid-item operator" value="-">-</button>
+        <button class="displaynum grid-item" value="7">7</button>
+        <button class="displaynum grid-item" value="8">8</button>
+        <button class="displaynum grid-item" value="9">9</button>
+        <button class="grid-item operator" value="*">*</button>
+        <button class="grid-item" id="clearVal">C</button>
+        <button class="displaynum grid-item" value="0">0</button>
+        <button class="grid-item" value="." id="dot">.</button>
+        <button class="grid-item operator" value="/">/</button>
+        <button class="grid-item" id="clearLastVal"><<</button>
+        <button class="grid-item"></button>
+        <button class="grid-item"></button>
+        <button class="grid-item" value="=" id="equals">=</button>
+
+    </div>
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script>
+    debugger
+    var HoldOutput;
+    var DisableOperator;
+    var DisableDot;
+    var output = $("#result").text();
+    var LastValue;
+    var SecondLastValue;
+    var result = $("#result");
+    var totalresult = $("#totalresult");
+
+    Initialize();
+
+    function Initialize() {
+
+        HoldOutput = "";
+        DisableOperator = true;
+
+        DisableDot = false;
+        $("#result").text('0');
+        $("#totalresult").text('0');
+
+        LastValue = "";
+        SecondLastValue = "";
+
+    }
+
+    $(document).ready(function () {
+        $(".displaynum").click(function (number) {
+            debugger
+            var numbers = number.target.value;
+
+            //DisableDot = false;
+            DisableOperator = false;
+                
+            //Zero validation , inital value
+            if (numbers == '0' && output == '0') {
+
+                //Starting output = 0 , cannot append 0
+                console.log('Do nothing. Cannot append more than 1 zero');
+
+            }
+
+            else if (output == '0') {
+
+                //If initial value is 0 , replace with other number
+                output = numbers;
+                HoldOutput = numbers;
+
+            }
+
+            else {
+
+                //Make sure no 00 after operator
+                SecondLastValue = output.substring(output.length - 2, output.length);
+
+                if ((SecondLastValue.includes("+0")
+                    || SecondLastValue.includes("-0")
+                    || SecondLastValue.includes("*0")
+                    || SecondLastValue.includes("/0"))
+                    && number.target.value == '0') {
+
+                    console.log('Do nothing. Second value after operator cant be 00.'); 
+                }
+
+                else {
+
+                    //Replace 0 with another number after operator
+                    if ((SecondLastValue.includes("+0")
+                        || SecondLastValue.includes("-0")
+                        || SecondLastValue.includes("*0")
+                        || SecondLastValue.includes("/0"))
+                        && number.target.value != '0') {
+
+                        output = output.slice(0, -1);
+                        output = output + numbers;
+
+                    }
+
+                    else {
+
+                        //Check output length , maximum 15
+                        if (HoldOutput.length > 14) {
+
+                            alert('Maximum length exceeded (15) ');
+
+                        }
+
+                        else {
+
+                            //Final output if above validation passed
+                            output += numbers;
+                            HoldOutput += numbers;
+
+                        }
+                    }
+                }
+            }
+
+            result.text(output);
+            _output = eval(output);
+            _output = "" + _output;
+
+            if (isNaN(_output)) {
+
+                console.log("Not a valid number");
+
+            }
+        })
+
+        $("#dot").click(function (decimal) {
+            debugger;
+            LastValue = output.substring(output.length - 1, output.length);
+
+            //Initial output
+            if (output == "0") {
+
+                output += decimal.target.value;
+                HoldOutput += decimal.target.value;
+                DisableDot = true;
+
+            }
+
+            if (HoldOutput == "" && DisableDot == false) {
+
+                output = output + "0" + ".";
+                HoldOutput = HoldOutput + "0" + "."
+                DisableDot = true;
+
+            }
+
+            if (DisableDot == false) {
+
+                output += decimal.target.value;
+                HoldOutput += decimal.target.value;
+                //To prevent 2 decimals
+                DisableDot = true;
+
+            }
+
+            result.text(output);
+            //HoldOutput = output;
+            debugger
+
+        })
+
+        $(".operator").click(function (operation) {
+            debugger
+            var operator = operation.target.value;
+
+            lastValue = output.substring(output.length - 1, output.length);
+
+            HoldOutput = "";
+
+            //Initial output
+            if (output == "0") {
+
+                output += operator;
+                DisableOperator = true;
+                HoldOutput = "";
+
+            }
+
+            if (DisableOperator == false) {
+                debugger
+                output += operator;
+                DisableOperator = true;
+
+            } else {
+
+                output = output.slice(0, -1);
+                output = output + operator;
+
+            }
+
+            //Replace current operator with new operator
+            debugger
+            //if (CheckLastOperator(output)) {
+            //    output = output.slice(0, -1);
+            //    output = output + operator;
+            //}
+
+            //Can use decimal after press operator
+            DisableDot = false;
+            result.text(output);
+
+        })
+
+        $("#equals").click(function () {
+
+            output = result.text();
+
+            output = eval(output);
+            output = "" + output;
+
+            if (output == "Infinity") {
+
+                alert('Cannot be divided by 0');
+                output = "0";
+
+            } else if (isNaN(output)) {
+
+                alert("Not a valid number");
+                output = "0";
+
+            }
+
+            result.text(output);
+            totalresult.text(output);
+            DisableOperator = false;
+
+        })
+
+        $("#clearLastVal").click(function () {
+            debugger
+            output = result.text();
+            output = output.slice(0, -1);
+
+            HoldOutput = HoldOutput.slice(0, -1);
+            result.text(output);
+
+            DisableOperator = false;
+            DisableDot = false;
+
+            _output = eval(output);
+            _output = "" + _output;
+
+            if (isNaN(_output)) {
+
+                output = "0";
+                result.text(output);
+                totalresult.text(output);
+
+            }
+
+            //HoldOutput = _output;
+            debugger;
+        })
+
+        $("#clearVal").click(function () {
+
+            HoldOutput = "";
+            output = '0';
+            result.text(output);
+            totalresult.text(output);
+
+            //Reset
+            DisableDot = false;
+            DisableOperator = false;
+
+        })
+    })
+
+    //function CheckLastOperator(str) {
+    //    debugger
+    //    var isLastCharOperator = false;
+    //    var SecondlastChar = str.substring(str.length - 2);
+    //    var operators = ["0+", "0-", "0*", "0/",];
+    //    for (i = 0; i < operators.length; i++) {
+    //        if (SecondlastChar == operators[i]) {
+    //            isLastCharOperator = true;
+    //            break;
+    //        }
+    //    }
+    //    return isLastCharOperator;
+    //}
+</script>
